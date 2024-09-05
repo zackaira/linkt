@@ -1,14 +1,9 @@
-<<<<<<< HEAD
 import { linktConvertToSlug } from "../../helpers";
-=======
-import React from "react";
-import { mmdConvertToSlug } from "../../helpers";
->>>>>>> 014acdfbeef5dd5d7bc3cd2cdacd60dbb775075c
 
 const InputText = (props) => {
-	const inputTitleSlug = mmdConvertToSlug(props.slug)
-		? mmdConvertToSlug(props.slug)
-		: mmdConvertToSlug(props.title);
+	const inputTitleSlug = linktConvertToSlug(props.slug)
+		? linktConvertToSlug(props.slug)
+		: linktConvertToSlug(props.title);
 
 	const prefix = props.prefix ? props.prefix : "";
 	const suffix = props.suffix ? props.suffix : "";

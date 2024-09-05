@@ -7,61 +7,124 @@ if (!defined('ABSPATH')) { exit; }
 /**
  * Admin class.
  */
-class MapMyDistance_Admin {
+class Linkt_Admin {
 	/**
 	 * Constructor function.
 	 */
 	public function __construct() {
-		add_action('admin_menu', array( $this, 'mmd_create_admin_menu' ), 10, 1);
+		add_action('admin_menu', array( $this, 'linkt_create_admin_menu' ), 10, 1);
+		add_filter('plugin_action_links_linkt/linkt.php', array($this, 'linkt_add_plugins_settings_link'));
+		add_filter('plugin_row_meta', array($this, 'linkt_add_plugins_row_link'), 10, 2);
 
-		add_filter('block_categories_all', array($this, 'mmd_blocks_custom_category'), 10, 2);
+		add_filter('block_categories_all', array($this, 'linkt_blocks_custom_category'), 10, 2);
 
-		add_filter('admin_body_class', array($this, 'mmd_admin_body_classes'));
+		add_filter('admin_body_class', array($this, 'linkt_admin_body_classes'));
+
+		add_action('template_redirect', array( $this, 'linkt_redirect_and_track' ));
+
+		add_filter('linkt_slug_prefix', array( $this, 'linkt_change_post_slug' ));
 
 		// Regsiter post type
-		// add_action('init' , array( $this, 'mmd_register_post_type' ));
+		add_action('init' , array( $this, 'linkt_register_post_type' ));
 
-		// MMD Edit Screen
-		// add_action('admin_menu', array( $this, 'mmd_post_type_meta_box' ));
+		// Linkt Edit Screen
+		add_action('admin_menu', array( $this, 'linkt_post_type_meta_box' ));
 
-<<<<<<< HEAD
-		// Linkt List Screen
 		add_filter('manage_edit-linkt_columns', array( $this, 'linkt_post_list_columns' ));
 		add_action('manage_posts_custom_column', array( $this, 'linkt_post_list_columns_detail' ));
-=======
-		// MMD List Screen
-		// add_filter('manage_edit-mmd_columns', array( $this, 'mmd_post_list_columns' ));
-		// add_action('manage_posts_custom_column', array( $this, 'mmd_post_list_columns_detail' ));
->>>>>>> 014acdfbeef5dd5d7bc3cd2cdacd60dbb775075c
 
-		// add_action('save_post', array( $this, 'mmd_save_post_meta' ));
+		add_action('save_post', array( $this, 'linkt_save_post_meta' ));
 
 		// Add Dashboard Widget
-		add_action('wp_dashboard_setup', array( $this, 'mmd_dashboard_widget' ));
+		add_action('wp_dashboard_setup', array( $this, 'linkt_dashboard_widget' ));
+
+		// Load blocks
+		$this->linkt_load_blocks();
+	}
+
+	/**
+	 * Load blocks based on the options set.
+	 */
+	public function linkt_load_blocks() {
+		$linktDefaults = json_decode(get_option('linkt_default_options'));
+		$linktOptions = json_decode(get_option('linkt_options'));
+
+		if (is_null($linktDefaults)) {
+			$linktDefaults = (object) ['blocks' => []];
+		}
+
+		if (is_null($linktOptions)) {
+			$linktOptions = (object) ['blocks' => []];
+		}
+
+		$linktBlocks = $linktOptions ? (array) $linktOptions->blocks : (array) $linktDefaults->blocks;
+
+		// Loop through settings and include enabled blocks files
+		if ($linktBlocks) :
+			foreach ($linktBlocks as $blockName => $exists) {
+				$prefix = substr($blockName, 0, 3);
+
+				if ($prefix != 'wc_' && $exists) {
+					if (file_exists(LINKT_PLUGIN_DIR . 'build/' . str_replace("_", "-", $blockName) . '/index.php')) {
+						require LINKT_PLUGIN_DIR . 'build/' . str_replace("_", "-", $blockName) . '/index.php';
+					}
+				}
+				if ($prefix == 'wc_' && self::linkt_is_plugin_active('woocommerce.php') && $exists) {
+					if (file_exists(LINKT_PLUGIN_DIR . 'build/' . str_replace("_", "-", $blockName) . '/index.php')) {
+						require LINKT_PLUGIN_DIR . 'build/' . str_replace("_", "-", $blockName) . '/index.php';
+					}
+				}
+			}
+		endif;
 	}
 
 	/**
 	 * Create an Admin Sub-Menu under WooCommerce
 	 */
-	public function mmd_create_admin_menu() {
+	public function linkt_create_admin_menu() {
 		$capability = 'manage_options';
-		$slug = 'mmd-settings';
+		$slug = 'linkt-settings';
 
 		add_submenu_page(
-			'edit.php?post_type=mmd',
-			__('Settings', 'mmd'),
-			__('Settings', 'mmd'),
+			'edit.php?post_type=linkt',
+			__('Settings', 'linkt'),
+			__('Settings', 'linkt'),
 			$capability,
 			$slug,
-			array($this, 'mmd_menu_page_template')
+			array($this, 'linkt_menu_page_template')
 		);
+	}
+
+	/**
+	 * Create a Setting link on Plugins.php page
+	 */
+	public function linkt_add_plugins_settings_link($links) {
+		$settings_link = '<a href="edit.php?post_type=linkt&page=linkt-settings">' . esc_html__('Settings', 'linkt') . '</a>';
+		array_push( $links, $settings_link );
+		
+  		return $links;
+	}
+
+	/**
+	 * Create a Setting link on Plugins.php page
+	 */
+	public function linkt_add_plugins_row_link($plugin_meta, $plugin_file) {
+		if ( strpos( $plugin_file, 'kaira-site-chat.php' ) !== false ) {
+			$new_links = array(
+				'Documentation' => '<a href="' . esc_url( 'https://linkt.com/documentation/' ) . '" target="_blank" aria-label="' . esc_attr__( 'View Linkt documentation', 'linkt' ) . '">' . esc_html__( 'Documentation', 'linkt' ) . '</a>',
+				'FAQs' => '<a href="' . esc_url( 'https://linkt.com/support/faqs/' ) . '" target="_blank" aria-label="' . esc_attr__( 'Go to Linkt FAQ\'s', 'linkt' ) . '">' . esc_html__( 'FAQ\'s', 'linkt' ) . '</a>'
+			);
+			$plugin_meta = array_merge( $plugin_meta, $new_links );
+		}
+		 
+		return $plugin_meta;
 	}
 
 	/**
 	 * Create the Page Template html for React
 	 * Settings created in ../src/backend/settings/admin.js
 	 */
-	public function mmd_menu_page_template() {
+	public function linkt_menu_page_template() {
 		$allowed_html = array(
 			'div' => array('class' => array(), 'id' => array()),
 			'h2' => array(),
@@ -69,22 +132,22 @@ class MapMyDistance_Admin {
 
 		$html  = '<div class="wrap">' . "\n";
 		$html .= '<h2> </h2>' . "\n";
-		$html .= '<div id="mmd-root"></div>' . "\n";
+		$html .= '<div id="linkt-root"></div>' . "\n";
 		$html .= '</div>' . "\n";
 
 		echo wp_kses($html ,$allowed_html);
 	}
 
 	/**
-	 * Create MMD blocks Category
+	 * Create Linkt blocks Category
 	 */
-	public function mmd_blocks_custom_category($categories, $post) {
+	public function linkt_blocks_custom_category($categories, $post) {
 		return array_merge(
 			$categories,
 			array(
 				array(
-					"slug" => "mmd-category",
-					"title" => __("MMD Blocks", "mmd"),
+					"slug" => "linkt-category",
+					"title" => __("Linkt Blocks", "linkt"),
 				)
 			)
 		);
@@ -93,7 +156,7 @@ class MapMyDistance_Admin {
 	/**
 	 * Function to check for active plugins
 	 */
-	public static function mmd_is_plugin_active($plugin_name) {
+	public static function linkt_is_plugin_active($plugin_name) {
 		// Get Active Plugin Setting
 		$active_plugins = (array) get_option('active_plugins', array());
 		if (is_multisite()) {
@@ -117,14 +180,14 @@ class MapMyDistance_Admin {
 	/**
 	 * Function to check for active plugins
 	 */
-	public function mmd_admin_body_classes($admin_classes) {
-		$lsProOptions = json_decode(get_option('mmd_license_message'));
+	public function linkt_admin_body_classes($admin_classes) {
+		$lsProOptions = json_decode(get_option('linkt_license_message'));
 		$isPremium = isset( $lsProOptions->data->activated ) ? (bool) $lsProOptions->data->activated : false;
 
 		if ($isPremium) {
-			$admin_classes .= ' ' . sanitize_html_class('mmd-pro');
+			$admin_classes .= ' ' . sanitize_html_class('linkt-pro');
 		} else {
-			$admin_classes .= ' ' . sanitize_html_class('mmd-free');
+			$admin_classes .= ' ' . sanitize_html_class('linkt-free');
 		}
 		return $admin_classes;
 	}
@@ -133,27 +196,27 @@ class MapMyDistance_Admin {
 	 * Register new post type
 	 * @return void
 	 */
-	public function mmd_register_post_type() {
+	public function linkt_register_post_type() {
 		$labels = array(
-			'name'               => __( 'Route', 'mmd' ),
-			'singular_name'      => __( 'Route', 'mmd' ),
-			'add_new'            => __( 'Add New', 'mmd' ),
-			'add_new_item'       => __( 'Add New', 'mmd' ),
-			'new_item'           => __( 'New Route', 'mmd' ),
-			'edit_item'          => __( 'Edit Route', 'mmd' ),
-			'view_item'          => __( 'View Route', 'mmd' ),
-			'all_items'          => __( 'All Routes', 'mmd' ),
-			'search_items'       => __( 'Search Routes', 'mmd' ),
-			'parent_item_colon'  => __( 'Parent Routes:', 'mmd' ),
-			'not_found'          => __( 'No Route found.', 'mmd' ),
-			'not_found_in_trash' => __( 'No Route found in Trash.', 'mmd' )
+			'name'               => __( 'Linkt', 'linkt' ),
+			'singular_name'      => __( 'Linkt', 'linkt' ),
+			'add_new'            => __( 'Add New', 'linkt' ),
+			'add_new_item'       => __( 'Add New', 'linkt' ),
+			'new_item'           => __( 'New Linkt', 'linkt' ),
+			'edit_item'          => __( 'Edit Linkt', 'linkt' ),
+			'view_item'          => __( 'View Linkt', 'linkt' ),
+			'all_items'          => __( 'All Linkts', 'linkt' ),
+			'search_items'       => __( 'Search Linkts', 'linkt' ),
+			'parent_item_colon'  => __( 'Parent Linkts:', 'linkt' ),
+			'not_found'          => __( 'No Linkt found.', 'linkt' ),
+			'not_found_in_trash' => __( 'No Linkt found in Trash.', 'linkt' )
 		);
 
 		$slug = apply_filters('linkt_slug_prefix', 'go');
 	
 		$args = array(
 			'labels'             => $labels,
-			'description'        => __( 'Description.', 'mmd' ),
+			'description'        => __( 'Description.', 'linkt' ),
 			'public'             => true, // false
 			'publicly_queryable' => true, // false
 			'exclude_from_search'=> true,
@@ -163,18 +226,14 @@ class MapMyDistance_Admin {
 			'query_var' => true,
 			'can_export' => true,
 			'rewrite' => array(
-<<<<<<< HEAD
 				'slug' => $slug,
-=======
-				'slug' => apply_filters( 'mmd_slug_prefix', 'go' ),
->>>>>>> 014acdfbeef5dd5d7bc3cd2cdacd60dbb775075c
 				'with_front' => false,
 			),
 			'capability_type'    => 'post',
 			'has_archive'        => true, // false
 			'hierarchical'       => false,
 			'show_in_rest' 		 => true,
-			'rest_base'			 => 'mmd',
+			'rest_base'			 => 'linkt',
 	  		'rest_controller_class' => 'WP_REST_Posts_Controller',
 			'menu_position'      => 101,
 			'supports'           => array( 'title' )
@@ -182,8 +241,8 @@ class MapMyDistance_Admin {
 
 		// Create Categories
 		register_taxonomy(
-		    'routes',
-		    'route',
+		    'linkts',
+		    'linkt',
 		    array(
 		        'hierarchical' => true,
 		        'label' => 'Categories',
@@ -193,7 +252,6 @@ class MapMyDistance_Admin {
 		    )
 		);
 
-<<<<<<< HEAD
 		register_post_type( 'linkt', $args );
 
 		// Add a new rewrite rule to handle flexible base slugs
@@ -209,74 +267,70 @@ class MapMyDistance_Admin {
 		$linktOptions = $linktSavedOptions ? json_decode($linktSavedOptions) : '';
 
 		return $linktOptions->settings->url_ext ?: $slug;
-=======
-		register_post_type( 'route', $args );
->>>>>>> 014acdfbeef5dd5d7bc3cd2cdacd60dbb775075c
 	}
 
 	/**
-	 * Create a Dashboard Widget for MMD
+	 * Create a Dashboard Widget for Linkt
 	 */
-	public function mmd_dashboard_widget() {
+	public function linkt_dashboard_widget() {
 		wp_add_dashboard_widget(
-			'mmd_dashboard_widget',
-			__( 'MMD Something', 'mmd' ), array( $this, 'mmd_render_dashboard_widget' )
+			'linkt_dashboard_widget',
+			__( 'Linkt - Click Statistics', 'linkt' ), array( $this, 'linkt_render_dashboard_widget' )
 		);
 	}
 
 	/**
 	 * Render the Dashboard Widget info
 	 */
-	public function mmd_render_dashboard_widget() {
-		echo '<div id="mmd-dashboard-widget"></div>';
+	public function linkt_render_dashboard_widget() {
+		echo '<div id="linkt-dashboard-widget"></div>';
 	}
 	
 	/**
 	 * Create admin columns in the post type list
 	 */
-	// public function mmd_post_list_columns( $columns ) {
-	// 	return array(
-	// 		'cb'               => '<input type="checkbox" />',
-	// 		'title'            => __( 'Title', 'mmd' ),
-	// 		'mmd_permalink'  => __( 'Track Link', 'mmd' ),
-	// 		'mmd_cats'       => __( 'Category', 'mmd' ),
-	// 		'mmd_created_on' => __( 'Date', 'mmd' )
-	// 	);
-	// }
+	public function linkt_post_list_columns( $columns ) {
+		return array(
+			'cb'               => '<input type="checkbox" />',
+			'title'            => __( 'Title', 'linkt' ),
+			'linkt_permalink'  => __( 'Track Link', 'linkt' ),
+			'linkt_cats'       => __( 'Category', 'linkt' ),
+			'linkt_created_on' => __( 'Date', 'linkt' )
+		);
+	}
 
 	/**
 	 * Fill admin columns with info
 	 */
-	public function mmd_post_list_columns_detail( $column ) {
+	public function linkt_post_list_columns_detail( $column ) {
 		global $post;
 		
 		switch ( $column ) {
-			case 'mmd_permalink' : ?>
-				<div class="mmd-list-track">
+			case 'linkt_permalink' : ?>
+				<div class="linkt-list-track">
 					<div class="link-meta-box-input">
-						<div class="mmd-copy fa-regular fa-copy"></div>
-							<input type="text" value="<?php echo esc_url( get_permalink() ); ?>" class="mmd-input" disabled />
-							<span class="mmd-tooltip"><?php esc_html_e( 'Copy to Clipboard', 'mmd' ) ?></span>
+						<div class="linkt-copy fa-regular fa-copy"></div>
+							<input type="text" value="<?php echo esc_url( get_permalink() ); ?>" class="linkt-input" disabled />
+							<span class="linkt-tooltip"><?php esc_html_e( 'Copy to Clipboard', 'linkt' ) ?></span>
 						</div>
 					</div>
 				</div><?php
 				break;
-			case 'mmd_cats': ?>
-				<div class="mmd-list-cats">
-					<?php echo get_the_term_list($post->ID, 'mmds', '', ', ', ''); ?>
+			case 'linkt_cats': ?>
+				<div class="linkt-list-cats">
+					<?php echo get_the_term_list($post->ID, 'linkts', '', ', ', ''); ?>
 				</div><?php
 				break;
-			case 'mmd_created_on':
+			case 'linkt_created_on':
 				$post_date = get_the_date( '', $post->ID );
-				echo __( 'Published', 'mmd' ) . ' ' . $post_date;
+				echo __( 'Published', 'linkt' ) . ' ' . $post_date;
 				break;
 		}
 	}
 
 	/**
-	 * Create MMD post type meta box
+	 * Create Linkt post type meta box
 	 */
-<<<<<<< HEAD
 	public function linkt_post_type_meta_box() {
 		$lsProOptions = json_decode(get_option('linkt_license_message'));
 		$isPremium = isset( $lsProOptions->data->activated ) ? (bool) $lsProOptions->data->activated : false;
@@ -289,6 +343,7 @@ class MapMyDistance_Admin {
 			'normal',
 			'high'
 		);
+		
 		if ($isPremium) :
 			add_meta_box(
 				'linkt-social',
@@ -300,53 +355,34 @@ class MapMyDistance_Admin {
 			);
 		endif;
 	}
-=======
-	// public function mmd_post_type_meta_box() {
-	// 	add_meta_box(
-	// 		'mmd-details',
-	// 		__( 'Redirect Link', 'mmd' ),
-	// 		array( &$this, 'mmd_render_post_type_meta_box' ),
-	// 		'mmd',
-	// 		'normal',
-	// 		'high'
-	// 	);
-	// }
->>>>>>> 014acdfbeef5dd5d7bc3cd2cdacd60dbb775075c
 
 	/**
 	 * Render the post type meta box
 	 */
-	public function mmd_render_post_type_meta_box( $post ) {
-		wp_nonce_field( basename( __FILE__ ), '_mmd_meta_box_nonce' );
+	public function linkt_render_post_type_meta_box( $post ) {
+		wp_nonce_field( basename( __FILE__ ), '_linkt_meta_box_nonce' );
     
-		$field_id = '_mmd_redirect';
-		$field_exists = get_post_meta( $post->ID, $field_id, true ) ? 'mmd-metabox-on' : '';
-		$saved_tags = json_decode(get_post_meta( $post->ID, '_mmd_url_params', true ));
+		$field_id = '_linkt_redirect';
+		$field_exists = get_post_meta( $post->ID, $field_id, true ) ? 'linkt-metabox-on' : '';
+		$saved_tags = json_decode(get_post_meta( $post->ID, '_linkt_url_params', true ));
 
 		$field_value = esc_attr( get_post_meta( $post->ID, $field_id, true ) );
 		$sanitized_tags = esc_attr( $saved_tags );
 		$sanitized_field_exists = sanitize_html_class( $field_exists );
 
-<<<<<<< HEAD
 		echo strtr( '<div class="linkt-metabox ' . $sanitized_field_exists . '">
-						<h5 class="linkt-title"><label for="{name}">Redirect the link to:</label></h5>
+						<h5 class="linkt-title"><label for="{name}">{label}</label></h5>
 						<input type="url" id="{name}" name="{name}" value="{value}" placeholder="{placeholder}" class="linkt-input" />
-=======
-		echo strtr( '<div class="mmd-metabox ' . $sanitized_field_exists . '">
-						<h5 class="mmd-title"><label for="{name}">image, description, etc</label></h5>
-						<input type="url" id="{name}" name="{name}" value="{value}" placeholder="{placeholder}" class="mmd-input" />
->>>>>>> 014acdfbeef5dd5d7bc3cd2cdacd60dbb775075c
 					</div>
-					<input type="hidden" id="_mmd_url_params" name="_mmd_url_params" value="' . $sanitized_tags . '" class="mmd-input" />', array(
-			'{label}' => __( 'Redirect the link to:', 'mmd' ),
+					<input type="hidden" id="_linkt_url_params" name="_linkt_url_params" value="' . $sanitized_tags . '" class="linkt-input" />', array(
+			'{label}' => __( 'Redirect the link to:', 'linkt' ),
 			'{name}'  => esc_attr( $field_id ),
-			'{placeholder}' => esc_url( __( 'https://enter-your-link.com/', 'mmd' ) ),
+			'{placeholder}' => esc_url( __( 'https://enter-your-link.com/', 'linkt' ) ),
 			'{value}' => $field_value,
 		) ); ?>
-		<div id="mmd-post-metabox"></div><?php
+		<div id="linkt-post-metabox"></div><?php
 	}
 
-<<<<<<< HEAD
 	/**
 	 * Render the post type meta box
 	 */
@@ -359,14 +395,14 @@ class MapMyDistance_Admin {
 		$post_title = get_the_title( $post->ID );
     
 		echo '<div id="linkt-social-metabox">
-				<h5 class="linkt-social-label"><label for="_linkt_social_image">OG: ' . __("Image", "linkt") . '</label></h5>
+				<h5 class="linkt-title"><label for="_linkt_social_image">OG: ' . __("Image", "linkt") . '</label></h5>
 				<div id="linkt-social-root"></div>
 		 		<input type="hidden" id="_linkt_social_image" name="_linkt_social_image" value="' . esc_url($image) . '" class="linkt-input" disabled />
 
-				<h5 class="linkt-social-label"><label for="_linkt_social_title">OG: ' . __("Title", "linkt") . '</label></h5>
+				<h5 class="linkt-title"><label for="_linkt_social_title">OG: ' . __("Title", "linkt") . '</label></h5>
 		 		<input type="text" id="_linkt_social_title" name="_linkt_social_title" value="' . esc_html($title) . '" placeholder="' . esc_html($post_title) . '" class="linkt-input" />
 
-				<h5 class="linkt-social-label"><label for="_linkt_social_desc">OG: ' . __("Description", "linkt") . '</label></h5>
+				<h5 class="linkt-title"><label for="_linkt_social_desc">OG: ' . __("Description", "linkt") . '</label></h5>
 				<textarea id="_linkt_social_desc" name="_linkt_social_desc" class="linkt-input" rows="4">' . esc_html($description) . '</textarea>
 				<div class="linkt-desc-count"><span class="count"></span>/200 ' . __("characters", "linkt") . '</div>
 
@@ -378,22 +414,16 @@ class MapMyDistance_Admin {
 	public function linkt_save_post_meta($post_id) {
 		if ( ! isset( $_POST['_linkt_meta_box_nonce'] ) || ! wp_verify_nonce( $_POST['_linkt_meta_box_nonce'], basename( __FILE__ ) ) )
 			return;
-=======
-	// public function mmd_save_post_meta($post_id) {
-	// 	if ( ! isset( $_POST['_mmd_meta_box_nonce'] ) || ! wp_verify_nonce( $_POST['_mmd_meta_box_nonce'], basename( __FILE__ ) ) )
-	// 		return;
->>>>>>> 014acdfbeef5dd5d7bc3cd2cdacd60dbb775075c
 
-	// 	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
-	// 		return;
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
+			return;
 
-	// 	if ( defined( 'DOING_AJAX' ) && DOING_AJAX )
-	// 		return;
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX )
+			return;
 
-	// 	if ( defined( 'DOING_CRON' ) && DOING_CRON )
-	// 		return;
+		if ( defined( 'DOING_CRON' ) && DOING_CRON )
+			return;
 		
-<<<<<<< HEAD
 		if ( isset( $_POST['_linkt_redirect'] ) ) :
 			update_post_meta( $post_id, '_linkt_redirect', sanitize_text_field( $_POST['_linkt_redirect'] ) );
 			update_post_meta( $post_id, '_linkt_url_params', json_encode($_POST['_linkt_url_params']) );
@@ -614,7 +644,7 @@ class MapMyDistance_Admin {
 			$og_title = get_the_title($post_id);
 		}
 		if (empty($og_description)) {
-			$og_description = wp_trim_words(get_the_excerpt($post_id), 55, '...');
+			$og_description = "";
 		}
 		if (empty($og_image)) {
 			$og_image = get_the_post_thumbnail_url($post_id, 'large');
@@ -630,14 +660,5 @@ class MapMyDistance_Admin {
 			'og:type' => 'article'
 		);
 	}
-=======
-	// 	if ( isset( $_POST['_mmd_redirect'] ) ) :
-	// 		update_post_meta( $post_id, '_mmd_redirect', sanitize_text_field( $_POST['_mmd_redirect'] ) );
-	// 		update_post_meta( $post_id, '_mmd_url_params', json_encode($_POST['_mmd_url_params']) );
-	// 	else :
-	// 		delete_post_meta( $post_id, '_mmd_redirect' );
-	// 	endif;
-	// }
->>>>>>> 014acdfbeef5dd5d7bc3cd2cdacd60dbb775075c
 }
-new MapMyDistance_Admin();
+new Linkt_Admin();

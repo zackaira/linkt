@@ -1,14 +1,9 @@
-<<<<<<< HEAD
 import { linktConvertToSlug } from "../../helpers";
-=======
-import React from "react";
-import { mmdConvertToSlug } from "../../helpers";
->>>>>>> 014acdfbeef5dd5d7bc3cd2cdacd60dbb775075c
 
 const InputToggleSwitch = ({ slug, title, value, onChange }) => {
-	const inputTitleSlug = mmdConvertToSlug(slug)
-		? mmdConvertToSlug(slug)
-		: mmdConvertToSlug(title);
+	const inputTitleSlug = linktConvertToSlug(slug)
+		? linktConvertToSlug(slug)
+		: linktConvertToSlug(title);
 	const isChecked = value ? true : false;
 
 	return (

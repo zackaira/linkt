@@ -1,12 +1,6 @@
-<<<<<<< HEAD
 // Localized JS object - linktObj
 const { useState, useEffect } = wp.element;
 const { __ } = wp.i18n;
-=======
-// Localized JS object - mmdObj
-import React, { useState, useEffect, useRef } from "react";
-import { __ } from "@wordpress/i18n";
->>>>>>> 014acdfbeef5dd5d7bc3cd2cdacd60dbb775075c
 import axios from "axios";
 import SettingRow from "./components/SettingRow";
 // import SettingGroup from "./components/SettingGroup";
@@ -15,25 +9,21 @@ import SettingHeader from "./components/SettingHeader";
 import GiveFeedback from "./components/GiveFeedback";
 import InfoTab from "./InfoTab";
 import Loader from "./Loader";
-import { mmdGroupSettings, blockListSettings } from "./helpers";
+import { linktGroupSettings, blockListSettings } from "./helpers";
 
-const Settings = ({ mmdObj }) => {
-	const url = `${mmdObj.apiUrl}mmd-api/v1`;
+const Settings = ({ linktObj }) => {
+	const url = `${linktObj.apiUrl}linkt-api/v1`;
 	const [loader, setLoader] = useState(false);
 	const [loadSetting, setLoadSetting] = useState(true);
 	const [activeTab, setActiveTab] = useState("1");
-	// const isPremium = Boolean(mmdObj.isPremium);
-	// const wcActive = Boolean(mmdObj.wcActive);
-	const mmdDefaults = mmdObj.mmdDefaults;
+	const isPremium = Boolean(linktObj.isPremium);
+	// const wcActive = Boolean(linktObj.wcActive);
+	const linktDefaults = linktObj.linktDefaults;
 
-<<<<<<< HEAD
 	// console.log(linktDefaults);
-=======
-	console.log(mmdDefaults);
->>>>>>> 014acdfbeef5dd5d7bc3cd2cdacd60dbb775075c
 
-	const [mmdOptions, setLinktOptions] = useState({});
-	const [mmdUrlVal, setLinktUrlVal] = useState(false);
+	const [linktOptions, setLinktOptions] = useState({});
+	const [linktUrlVal, setLinktUrlVal] = useState(false);
 
 	const changeTab = (tabId) => {
 		setActiveTab(tabId);
@@ -56,26 +46,21 @@ const Settings = ({ mmdObj }) => {
 		const groupKey = settingGroup === "global" ? name.substring(7) : name;
 
 		setLinktOptions({
-			...mmdOptions,
+			...linktOptions,
 			...(!settingGroup || settingGroup === "global" // sn_ name gets saved as default / in no group
 				? { [groupKey]: value }
 				: {
 						[settingGroup]: {
-							...mmdOptions[settingGroup],
+							...linktOptions[settingGroup],
 							[settingName]: value,
 						},
 				  }),
 		});
 	};
 
-<<<<<<< HEAD
-=======
-	console.log(mmdOptions);
-
->>>>>>> 014acdfbeef5dd5d7bc3cd2cdacd60dbb775075c
 	useEffect(() => {
-		mmdGroupSettings();
-	}, [mmdOptions]);
+		linktGroupSettings();
+	}, [linktOptions]);
 
 	// Submit form
 	const handleSubmit = (e) => {
@@ -86,26 +71,26 @@ const Settings = ({ mmdObj }) => {
 			.post(
 				url + "/settings",
 				{
-					mmdOptions: JSON.stringify(mmdOptions),
+					linktOptions: JSON.stringify(linktOptions),
 				},
 				{
 					// Add Nonce to prevent this working elsewhere
 					headers: {
 						"content-type": "application/json",
-						"X-WP-NONCE": mmdObj.nonce,
+						"X-WP-NONCE": linktObj.nonce,
 					},
 				}
 			)
 			.then((res) => {
 				// console.log(res.data);
-				// const mmdOptions = JSON.parse(res.data.mmdOptions);
+				// const linktOptions = JSON.parse(res.data.linktOptions);
 				if (res.data === "Successful") setLinktUrlVal(true);
 				setLoader(false);
 			});
 	};
 
 	const confirmDelete = (e) => {
-		const deleteBtn = document.getElementsByClassName("mmd-delete");
+		const deleteBtn = document.getElementsByClassName("linkt-delete");
 		deleteBtn[0].classList.add("show-confirm");
 		setTimeout(function () {
 			deleteBtn[0].classList.remove("show-confirm");
@@ -116,7 +101,7 @@ const Settings = ({ mmdObj }) => {
 		e.preventDefault();
 		if (
 			window.confirm(
-				__("Are you sure you want to delete all settings?", "mmd")
+				__("Are you sure you want to delete all settings?", "linkt")
 			)
 		) {
 			setLoader(true);
@@ -124,7 +109,7 @@ const Settings = ({ mmdObj }) => {
 			axios
 				.delete(url + "/delete", {
 					headers: {
-						"X-WP-NONCE": mmdObj.nonce,
+						"X-WP-NONCE": linktObj.nonce,
 					},
 				})
 				.then((res) => {
@@ -139,23 +124,23 @@ const Settings = ({ mmdObj }) => {
 		axios
 			.get(url + "/settings")
 			.then((res) => {
-				const mmdOptions = res.data
+				const linktOptions = res.data
 					? JSON.parse(res.data)
 					: console.log("Linkt Options Empty");
 
 				// setState dynamically for all settings
-				if (mmdOptions) {
-					for (const key in mmdOptions) {
+				if (linktOptions) {
+					for (const key in linktOptions) {
 						setLinktOptions((prevState) => ({
 							...prevState,
-							[key]: mmdOptions[key] ? mmdOptions[key] : "",
+							[key]: linktOptions[key] ? linktOptions[key] : "",
 						}));
 					}
 				} else {
-					setLinktOptions(mmdDefaults); // Set settings to mmdDefaults if not found
-					// document.querySelector(".mmdSaveBtn").click();
+					setLinktOptions(linktDefaults); // Set settings to linktDefaults if not found
+					// document.querySelector(".linktSaveBtn").click();
 				}
-				// console.log(mmdOptions);
+				// console.log(linktOptions);
 			})
 			.then(() => {
 				setLoadSetting(false);
@@ -164,166 +149,144 @@ const Settings = ({ mmdObj }) => {
 
 	return (
 		<React.Fragment>
-			<div className="mmd-settings">
-				<div className="mmdSettingBar">
+			<div className="linkt-settings">
+				<div className="linktSettingBar">
 					<h2>
 						{isPremium
-							? __("Linkt Pro Settings", "mmd")
-							: __("Linkt Settings", "mmd")}
+							? __("Linkt Pro Settings", "linkt")
+							: __("Linkt Settings", "linkt")}
 					</h2>
-					<div className="mmdSettingBarOptions">
+					<div className="linktSettingBarOptions">
 						{/* <a
-							href={mmdObj.accountUrl}
-							className="fa-regular fa-user mmd-account"
-							title={__("My Account", "mmd")}
+							href={linktObj.accountUrl}
+							className="fa-regular fa-user linkt-account"
+							title={__("My Account", "linkt")}
 						></a> */}
 						<a
 							href={
-								mmdObj.adminUrl +
-								"edit.php?post_type=mmd&page=mmd-license"
+								linktObj.adminUrl +
+								"edit.php?post_type=linkt&page=linkt-license"
 							}
-<<<<<<< HEAD
 							className={`fa-solid fa-key linkt-upgrade`}
 							title={__("Enter your License Key", "linkt")}
-=======
-							className={`fa-solid fa-key mmd-upgrade`}
-							title={__("Upgrade to Linkt Pro", "mmd")}
->>>>>>> 014acdfbeef5dd5d7bc3cd2cdacd60dbb775075c
 						></a>
 						{/* <a
-							href={mmdObj.accountUrl}
-							className="fa-solid fa-life-ring mmd-docs"
-							title={__("Documentation", "mmd")}
+							href={linktObj.accountUrl}
+							className="fa-solid fa-life-ring linkt-docs"
+							title={__("Documentation", "linkt")}
 							target="_blank"
 						></a> */}
 					</div>
 				</div>
 
-				{Object.keys(mmdOptions).length > 0 &&
-					!mmdOptions.disablerating && (
+				{Object.keys(linktOptions).length > 0 &&
+					!linktOptions.disablerating && (
 						<GiveFeedback
-							mmdOptions={mmdOptions}
+							linktOptions={linktOptions}
 							clickClose={handleChange}
 						/>
 					)}
 
-				<div className="mmd-settings-content">
-					<form id="mmd-settings-form" onSubmit={(e) => handleSubmit(e)}>
-						<div className="mmd-tabs">
+				<div className="linkt-settings-content">
+					<form id="linkt-settings-form" onSubmit={(e) => handleSubmit(e)}>
+						<div className="linkt-tabs">
 							<ul>
 								<li>
 									<a
-										id="mmdtab-1"
-										className={`mmd-tab ${activeTab === "1" ? "active" : ""}`}
+										id="linkttab-1"
+										className={`linkt-tab ${activeTab === "1" ? "active" : ""}`}
 										onClick={() => changeTab("1")}
 									>
-										{__("Settings", "mmd")}
+										{__("Settings", "linkt")}
 									</a>
 								</li>
 								<li>
 									<a
-										id="mmdtab-2"
-										className={`mmd-tab ${activeTab === "2" ? "active" : ""}`}
+										id="linkttab-2"
+										className={`linkt-tab ${activeTab === "2" ? "active" : ""}`}
 										onClick={() => changeTab("2")}
 									>
-										{__("Blocks", "mmd")}
+										{__("Blocks", "linkt")}
 									</a>
 								</li>
 
 								<li className="help">
 									<a
-										id="mmdtab-help"
-										className={`mmd-tab ${
+										id="linkttab-help"
+										className={`linkt-tab ${
 											activeTab === "help" ? "active" : ""
 										}`}
 										onClick={() => changeTab("help")}
 									>
-										{isPremium ? __("Help", "mmd") : __("Go Pro", "mmd")}
+										{isPremium ? __("Help", "linkt") : __("Go Pro", "linkt")}
 									</a>
 								</li>
 							</ul>
 
-							<div className="mmd-content-wrap">
-								<div className="mmd-content-wrap-inner">
+							<div className="linkt-content-wrap">
+								<div className="linkt-content-wrap-inner">
 									{(loadSetting || loader) && <Loader />}
 									<div
-										id="mmd-content-1"
-										className={`mmd-content ${
+										id="linkt-content-1"
+										className={`linkt-content ${
 											activeTab === "1" ? "active" : ""
 										}`}
 									>
 										<SettingHeader
-											title={__("Linkt Settings", "mmd")}
+											title={__("Linkt Settings", "linkt")}
 											description={__(
 												"Adjust your default settings for Linkt and turn on/off certain features.",
-												"mmd"
+												"linkt"
 											)}
 										/>
 
 										<table className="form-table" role="presentation">
 											<tbody>
 												<SettingRow
-													title={__("URL Extension", "mmd")}
+													title={__("URL Extension", "linkt")}
 													slug="settings_url_ext"
-													value={mmdOptions.settings?.url_ext}
+													value={linktOptions.settings?.url_ext}
 													placeholder="go"
 													inputType="text"
 													onChange={handleChange}
 													note={__(
 														"Suggestions: recommends, suggests, visit, explore, discover, refer, view",
-														"mmd"
+														"linkt"
 													)}
-													{...(mmdUrlVal
+													{...(linktUrlVal
 														? {
 																standOutNote: __(
 																	"After editing the URL Extension",
-																	"mmd"
+																	"linkt"
 																),
 														  }
 														: {})}
 												/>
 
 												<SettingRow
-													title={__("Dashboard Widget Display", "mmd")}
+													title={__("Dashboard Widget Display", "linkt")}
 													slug="settings_dash_display"
-													value={mmdOptions.settings?.dash_display}
+													value={linktOptions.settings?.dash_display}
 													inputType="select"
 													options={{
-														single: __("As Single Linkts", "mmd"),
-														categs: __("Grouped in Categories", "mmd"),
+														single: __("As Single Linkts", "linkt"),
+														categs: __("Grouped in Categories", "linkt"),
 													}}
 													onChange={handleChange}
 												/>
-<<<<<<< HEAD
-=======
-												{/* {!isPremium &&
-													mmdOptions.settings?.dash_display === "categs" && (
-														<>
-															<SettingRow
-																title={__("PROOOOO", "mmd")}
-																slug="settings_promote"
-																value={
-																	"PROMOTE PREMIUM FEATURE YES YES YES !!!!"
-																}
-																inputType="text"
-																onChange={handleChange}
-															/>
-														</>
-													)} */}
->>>>>>> 014acdfbeef5dd5d7bc3cd2cdacd60dbb775075c
 
 												<SettingRow
-													title={__("Order By", "mmd")}
+													title={__("Order By", "linkt")}
 													slug="settings_chart_order_by"
-													value={mmdOptions.settings?.chart_order_by}
+													value={linktOptions.settings?.chart_order_by}
 													inputType="select"
 													options={{
 														title:
-															mmdOptions.settings?.dash_display === "categs"
+															linktOptions.settings?.dash_display === "categs"
 																? __("Category Names & Post Titles")
 																: __("Post Titles"),
 														...{
-															...(mmdOptions.settings?.dash_display ===
+															...(linktOptions.settings?.dash_display ===
 															"single"
 																? { total_clicks: __("Click Count") }
 																: {}),
@@ -332,23 +295,22 @@ const Settings = ({ mmdObj }) => {
 													onChange={handleChange}
 												/>
 												<SettingRow
-													title={__("Order", "mmd")}
+													title={__("Order", "linkt")}
 													slug="settings_chart_order"
-													value={mmdOptions.settings?.chart_order}
+													value={linktOptions.settings?.chart_order}
 													inputType="select"
 													options={{
-														asc: __("Ascending", "mmd"),
-														desc: __("Descending", "mmd"),
+														asc: __("Ascending", "linkt"),
+														desc: __("Descending", "linkt"),
 													}}
 													onChange={handleChange}
 												/>
 
 												<SettingRow
-													title={__("Chart Display", "mmd")}
+													title={__("Chart Display", "linkt")}
 													slug="settings_chart_display"
-													value={mmdOptions.settings?.chart_display}
+													value={linktOptions.settings?.chart_display}
 													inputType="select"
-<<<<<<< HEAD
 													options={
 														isPremium
 															? {
@@ -367,46 +329,22 @@ const Settings = ({ mmdObj }) => {
 													onChange={handleChange}
 												/>
 
-=======
-													options={{
-														"7_days": __("Last 7 Days", "mmd"),
-														"14_days": __("Last 2 Weeks", "mmd"),
-														"30_days": __("Last 30 Days", "mmd"),
-														"3_months": __("Last 3 Months", "mmd"),
-														"12_months": __("Last 12 Months", "mmd"),
-													}}
-													onChange={handleChange}
-												/>
-
-												{/* {!isPremium && (
-													<>
-														<SettingRow
-															title={__("PROOOOO", "mmd")}
-															slug="settings_promotes"
-															value={"PROMOTE PREMIUM FEATURE YES YES YES !!!!"}
-															inputType="text"
-															onChange={handleChange}
-														/>
-													</>
-												)} */}
-
->>>>>>> 014acdfbeef5dd5d7bc3cd2cdacd60dbb775075c
 												<SettingRow
-													title={__("Enable Chart", "mmd")}
+													title={__("Enable Chart", "linkt")}
 													slug="settings_chart_enabled"
-													value={mmdOptions.settings?.chart_enabled}
+													value={linktOptions.settings?.chart_enabled}
 													inputType="toggle"
 													onChange={handleChange}
 												/>
 												<SettingRow
-													title={__("Track Logged In Users", "mmd")}
+													title={__("Track Logged In Users", "linkt")}
 													slug="settings_track_loggedin"
-													value={mmdOptions.settings?.track_loggedin}
+													value={linktOptions.settings?.track_loggedin}
 													inputType="toggle"
 													onChange={handleChange}
 													note={__(
 														"For websites with user accounts, also track users that are logged in.",
-														"mmd"
+														"linkt"
 													)}
 												/>
 											</tbody>
@@ -414,8 +352,8 @@ const Settings = ({ mmdObj }) => {
 									</div>
 
 									<div
-										id="mmd-content-2"
-										className={`mmd-content ${
+										id="linkt-content-2"
+										className={`linkt-content ${
 											activeTab === "2" ? "active" : ""
 										}`}
 									>
@@ -428,9 +366,9 @@ const Settings = ({ mmdObj }) => {
 										/>
 
 										<div className="blockons-block-settings">
-											{mmdDefaults.blocks &&
-												mmdOptions &&
-												Object.entries(mmdDefaults.blocks).map(
+											{linktDefaults.blocks &&
+												linktOptions &&
+												Object.entries(linktDefaults.blocks).map(
 													([key, value]) => (
 														<SettingBlock
 															key={key}
@@ -440,8 +378,8 @@ const Settings = ({ mmdObj }) => {
 															slug={`blocks_${key}`}
 															value={
 																// If the setting exists in the saved settings then use it otherwise off by default
-																mmdOptions && mmdOptions.blocks
-																	? mmdOptions.blocks[key]
+																linktOptions && linktOptions.blocks
+																	? linktOptions.blocks[key]
 																	: false
 															}
 															inputType="toggle"
@@ -474,50 +412,50 @@ const Settings = ({ mmdObj }) => {
 									</div>
 
 									<div
-										id="mmd-content-help"
-										className={`mmd-content ${
+										id="linkt-content-help"
+										className={`linkt-content ${
 											activeTab === "help" ? "active" : ""
 										}`}
 									>
 										<InfoTab
-											adminUrl={mmdObj.adminUrl}
+											adminUrl={linktObj.adminUrl}
 											isPro={isPremium}
-											// upgrade={mmdObj.upgradeUrl}
+											// upgrade={linktObj.upgradeUrl}
 										/>
 									</div>
 								</div>
 
-								<div className="mmdSettingBar bottom">
-									<div className="mmdSettingBarMain">
+								<div className="linktSettingBar bottom">
+									<div className="linktSettingBarMain">
 										<button
 											type="submit"
-											className="button mmdSaveBtn button-primary"
+											className="button linktSaveBtn button-primary"
 										>
-											{__("Save Settings", "mmd")}
+											{__("Save Settings", "linkt")}
 										</button>
-										<div className="mmdSaveBtnLoader">
+										<div className="linktSaveBtnLoader">
 											{(loadSetting || loader) && <Loader />}
 										</div>
 
-										{mmdUrlVal && (
+										{linktUrlVal && (
 											<a
 												href="options-permalink.php"
 												className="stand-out-note-link"
 												target="_blank"
 											>
-												{__("Update the Permalinks", "mmd")}
+												{__("Update the Permalinks", "linkt")}
 											</a>
 										)}
 									</div>
-									<div className="mmdSettingBarOptions">
+									<div className="linktSettingBarOptions">
 										<div
-											className="mmd-delete"
-											title={__("Reset Settings", "mmd")}
+											className="linkt-delete"
+											title={__("Reset Settings", "linkt")}
 											onClick={confirmDelete}
 										>
-											<div className="mmd-confirm-delete">
+											<div className="linkt-confirm-delete">
 												<a onClick={handleDeleteOptions}>
-													{__("Confirm... Reset All Settings!", "mmd")}
+													{__("Confirm... Reset All Settings!", "linkt")}
 												</a>
 											</div>
 										</div>

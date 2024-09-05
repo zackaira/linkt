@@ -1,34 +1,37 @@
+body.wp-admin #adminmenu #menu-posts-linkt ul.wp-submenu li:last-child {
+	display: none !important;
+}
 /* ---- Update Notice Styling ---- */
-.mmd-admin-notice {
+.linkt-admin-notice {
 	position: relative;
 	padding: 12px;
 }
-.mmd-admin-notice a.notice-dismiss {
+.linkt-admin-notice a.notice-dismiss {
 	text-decoration: none;
 }
-.mmd-admin-notice .mmd-notice-title {
+.linkt-admin-notice .linkt-notice-title {
 	margin: 0;
 	padding: 0;
 	font-size: 15px;
 	font-weight: 500;
 	color: #222;
 }
-.mmd-admin-notice .mmd-notice-title b {
+.linkt-admin-notice .linkt-notice-title b {
 	color: #b14beb;
 }
-.mmd-admin-notice p.mmd-notice-text {
+.linkt-admin-notice p.linkt-notice-text {
 	margin: 5px 0 0;
 	padding: 0;
 }
-.mmd-notice.inline p.mmd-notice-text,
-.mmd-notice.inline a.mmd-notice-btn {
+.linkt-notice.inline p.linkt-notice-text,
+.linkt-notice.inline a.linkt-notice-btn {
 	display: inline-block;
 	vertical-align: baseline;
 	margin-right: 5px;
 }
 
 /* -- Loader - Used in Settings & Dashboard Widget -- */
-.mmd-loader {
+.linkt-loader {
 	position: relative;
 	display: flex;
 	justify-content: center;
@@ -37,10 +40,10 @@
 	height: 80px;
 	z-index: 2;
 }
-.mmd-loader * {
+.linkt-loader * {
 	box-sizing: border-box;
 }
-.mmd-loader-sector {
+.linkt-loader-sector {
 	border-radius: 50%;
 	position: absolute;
 	width: 100%;
@@ -49,29 +52,29 @@
 	mix-blend-mode: overlay;
 }
 
-.mmd-loader-sector-pink {
+.linkt-loader-sector-pink {
 	animation: rotate 2s ease-out infinite;
 	border-top: 3px solid #f091ff;
 }
-.mmd-loader-sector-blue {
+.linkt-loader-sector-blue {
 	animation: rotate 2.5s ease-in infinite;
 	border-top: 3px solid #6883ec;
 }
-.mmd-loader-sector-purple {
+.linkt-loader-sector-purple {
 	animation: rotate 1.5s ease-in-out infinite;
 	border-top: 3px solid #b14beb;
 }
-.mmdSaveBtnLoader {
+.linktSaveBtnLoader {
 	width: 56px;
 	height: 56px;
 	position: relative;
 	margin: 0 0 0 10px;
 }
-.mmdSettingBarMain .mmd-loader-wrap {
+.linktSettingBarMain .linkt-loader-wrap {
 	padding-top: 0;
 	align-items: center;
 }
-.mmdSettingBarMain .mmd-loader {
+.linktSettingBarMain .linkt-loader {
 	width: 40px;
 	height: 40px;
 }

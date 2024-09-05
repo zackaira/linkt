@@ -2,20 +2,15 @@ const { useState, useEffect } = wp.element;
 const { __ } = wp.i18n;
 const { testUtils: ReactTestUtils } = wp.element;
 import { ChromePicker } from "react-color";
-<<<<<<< HEAD
 import { linktConvertToSlug } from "../../helpers";
-=======
-import { mmdConvertToSlug } from "../../helpers";
-import { __ } from "@wordpress/i18n";
->>>>>>> 014acdfbeef5dd5d7bc3cd2cdacd60dbb775075c
 
 const ColorPicker = (props) => {
-	const colorTitleSlug = mmdConvertToSlug(props.slug)
-		? mmdConvertToSlug(props.slug)
-		: mmdConvertToSlug(props.title);
+	const colorTitleSlug = linktConvertToSlug(props.slug)
+		? linktConvertToSlug(props.slug)
+		: linktConvertToSlug(props.title);
 	const defaultValue = props.defaultValue ? props.defaultValue : "#BBB";
 	const [activeColor, setActiveColor] = useState(defaultValue);
-	let allBtns = document.getElementsByClassName("mmdColorPicker");
+	let allBtns = document.getElementsByClassName("linktColorPicker");
 
 	useEffect(() => {
 		props.value ? setActiveColor(props.value) : defaultValue;
@@ -24,21 +19,12 @@ const ColorPicker = (props) => {
 	const onButtonFocus = (e) => {
 		e.preventDefault();
 		[...allBtns].forEach(function (item) {
-			item.classList.remove("mmdButton-active");
+			item.classList.remove("linktButton-active");
 			item.removeAttribute("id");
 		});
 
-<<<<<<< HEAD
 		e.target.closest(".linktColorPicker").setAttribute("id", "openColorPicker");
 		e.target.closest(".linktColorPicker").classList.add("linktButton-active");
-=======
-		e.target
-			.closest(".mmdColorPicker")
-			.setAttribute("id", "openColorPicker");
-		e.target
-			.closest(".mmdColorPicker")
-			.classList.add("mmdButton-active");
->>>>>>> 014acdfbeef5dd5d7bc3cd2cdacd60dbb775075c
 	};
 
 	window.addEventListener("click", function (e) {
@@ -48,8 +34,8 @@ const ColorPicker = (props) => {
 			if (!e.target == isElement || !isElement.contains(e.target)) {
 				isElement.removeAttribute("id");
 				isElement
-					.closest(".mmdColorPicker")
-					.classList.remove("mmdButton-active");
+					.closest(".linktColorPicker")
+					.classList.remove("linktButton-active");
 			}
 		}
 	});
@@ -78,39 +64,37 @@ const ColorPicker = (props) => {
 	};
 
 	return (
-		<React.Fragment>
-			<div className="mmdColorPicker">
-				<div className="mmdColorDisplay">
-					<button
-						className="mmdColorBtn"
-						style={{ backgroundColor: activeColor }}
-						onClick={(e) => e.preventDefault()}
-						onFocus={(e) => onButtonFocus(e)}
-						// onBlur={(e) => onButtonBlur(e)}
-					>
-						<span className="mmdColorBtnTxt">
-							{__("Select Color", "mmd")}
-						</span>
-					</button>
-					<input
-						type="text"
-						id={colorTitleSlug}
-						value={activeColor || ""}
-						className="mmdColorInput"
-						disabled
-						onChange={props.onChange}
-					/>
-				</div>
-				<div className="mmdPickColor">
-					<ChromePicker
-						color={activeColor}
-						onChange={(newColor) => handleColorChange(newColor)}
-						disableAlpha={true}
-						onChangeComplete={(newColor) => changeColor(newColor)}
-					/>
-				</div>
+		<div className="linktColorPicker">
+			<div className="linktColorDisplay">
+				<button
+					className="linktColorBtn"
+					style={{ backgroundColor: activeColor }}
+					onClick={(e) => e.preventDefault()}
+					onFocus={(e) => onButtonFocus(e)}
+					// onBlur={(e) => onButtonBlur(e)}
+				>
+					<span className="linktColorBtnTxt">
+						{__("Select Color", "linkt")}
+					</span>
+				</button>
+				<input
+					type="text"
+					id={colorTitleSlug}
+					value={activeColor || ""}
+					className="linktColorInput"
+					disabled
+					onChange={props.onChange}
+				/>
 			</div>
-		</React.Fragment>
+			<div className="linktPickColor">
+				<ChromePicker
+					color={activeColor}
+					onChange={(newColor) => handleColorChange(newColor)}
+					disableAlpha={true}
+					onChangeComplete={(newColor) => changeColor(newColor)}
+				/>
+			</div>
+		</div>
 	);
 };
 

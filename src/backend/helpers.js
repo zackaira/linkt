@@ -3,7 +3,7 @@ const { __ } = wp.i18n;
 /*
  * Convert Text to slug
  */
-export const mmdConvertToSlug = (text, spacer = "_") => {
+export const linktConvertToSlug = (text, spacer = "_") => {
 	return text
 		.toLowerCase()
 		.replace(/[^\w ]+/g, "")
@@ -73,7 +73,7 @@ export const getAllPostLinkts = async (apiUrl, id, period = "7_days", tag) => {
 	const fetchPostLinkts = async () => {
 		try {
 			const response = await fetch(
-				`${apiUrl}mmd-api/v1/get-mmds/${id}?period=${period}&tag=${tag}`,
+				`${apiUrl}linkt-api/v1/get-linkts/${id}?period=${period}&tag=${tag}`,
 				{
 					method: "GET",
 					headers: {
@@ -104,7 +104,7 @@ export const getUncategorizedLinkts = async (apiUrl, termIds) => {
 	const fetchPosts = async () => {
 		try {
 			const response = await fetch(
-				`${apiUrl}wp/v2/mmd?mmds_exclude=${termIds.join(",")}&per_page=100`
+				`${apiUrl}wp/v2/linkt?linkts_exclude=${termIds.join(",")}&per_page=100`
 			);
 
 			if (!response.ok) {
@@ -356,12 +356,12 @@ export const sortOnlyWithTagElements = (chartdata, tagsArray) => {
  */
 export const blockListSettings = {
 	button: {
-		desc: __("Button blah blah", "mmd"),
+		desc: __("Button blah blah", "linkt"),
 		pluginSpecific: false,
 		isNew: false,
 	},
 	disclosure: {
-		desc: __("Add an affiliate disclosure blah blah", "mmd"),
+		desc: __("Add an affiliate disclosure blah blah", "linkt"),
 		pluginSpecific: false,
 		isNew: false,
 	},
@@ -372,8 +372,8 @@ export const blockListSettings = {
 	},
 };
 
-export const mmdGroupSettings = () => {
-	const groupBtns = document.querySelectorAll(".mmd-group-btn");
+export const linktGroupSettings = () => {
+	const groupBtns = document.querySelectorAll(".linkt-group-btn");
 
 	if (groupBtns) {
 		groupBtns.forEach((btn) => {
@@ -382,16 +382,16 @@ export const mmdGroupSettings = () => {
 
 				groupBtns.forEach((btnItem) => {
 					btnItem.parentElement.removeAttribute("id", "openGroup");
-					btnItem.parentElement.classList.remove("mmd-show");
+					btnItem.parentElement.classList.remove("linkt-show");
 				});
 
-				// Add / Remove .mmd-show class
-				if (btnParent.classList.contains("mmd-show")) {
+				// Add / Remove .linkt-show class
+				if (btnParent.classList.contains("linkt-show")) {
 					btnParent.removeAttribute("id", "openGroup");
-					btnParent.classList.remove("mmd-show");
+					btnParent.classList.remove("linkt-show");
 				} else {
 					btnParent.setAttribute("id", "openGroup");
-					btnParent.classList.add("mmd-show");
+					btnParent.classList.add("linkt-show");
 				}
 			});
 		});
@@ -404,7 +404,7 @@ export const mmdGroupSettings = () => {
 		if (openGroup) {
 			if (!e.target == openGroup || !openGroup.contains(e.target)) {
 				openGroup.removeAttribute("id");
-				openGroup.classList.remove("mmd-show");
+				openGroup.classList.remove("linkt-show");
 			}
 		}
 	});

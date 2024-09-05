@@ -1,16 +1,24 @@
-<<<<<<< HEAD
 const { useState } = wp.element;
 const { __ } = wp.i18n;
-import DashStats from "./DashStats";
-=======
-import React, { useState } from "react";
-import { __ } from "@wordpress/i18n";
->>>>>>> 014acdfbeef5dd5d7bc3cd2cdacd60dbb775075c
 
 const PostItem = ({ number }) => {
 	// const [activeStatsPostId, setActiveStatsPostId] = useState(null);
 
-	return <div className="mmd">{number}</div>;
+	return (
+		<div className="post-item">
+			<div className="post-item__title">Post {number}</div>
+			<div className="post-item__stats">
+				<div className="post-item__stat">
+					<div className="post-item__stat-title">Clicks</div>
+					<div className="post-item__stat-value">0</div>
+				</div>
+				<div className="post-item__stat">
+					<div className="post-item__stat-title">Unique Clicks</div>
+					<div className="post-item__stat-value">0</div>
+				</div>
+			</div>
+		</div>
+	);
 };
 
 export default PostItem;

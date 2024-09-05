@@ -2,49 +2,33 @@ const { __ } = wp.i18n;
 import axios from "axios";
 import Loader from "../Loader";
 
-<<<<<<< HEAD
 const UpdateNotice = () => {
 	const linktObject = linktObj;
 	const url = `${linktObject.apiUrl}linkt-api/v1`;
-=======
-const Settings = () => {
-	const mmdObject = mmdObj;
-	const url = `${mmdObject.apiUrl}mmd-api/v1`;
->>>>>>> 014acdfbeef5dd5d7bc3cd2cdacd60dbb775075c
 	const [loader, setLoader] = useState(false);
-	const [mmdDefaults, setBlockonsDefaults] = useState({});
-	const [mmdOptions, setBlockonsOptions] = useState({});
+	const [linktDefaults, setBlockonsDefaults] = useState({});
+	const [linktOptions, setBlockonsOptions] = useState({});
 
 	// Get Settings from db
 	useEffect(() => {
 		setLoader(true);
 
 		axios.get(url + "/defaults").then((res) => {
-			const mmdDefaults = res.data.mmdDefaults
-				? JSON.parse(res.data.mmdDefaults)
+			const linktDefaults = res.data.linktDefaults
+				? JSON.parse(res.data.linktDefaults)
 				: console.log("Blockons Options Empty");
 
-<<<<<<< HEAD
 			setBlockonsDefaults(linktDefaults); // Set settings to defaults if not found
 			// console.log("Defaults Done");
-=======
-			setBlockonsDefaults(mmdDefaults); // Set settings to defaults if not found
-			console.log("Defaults Done");
->>>>>>> 014acdfbeef5dd5d7bc3cd2cdacd60dbb775075c
 		});
 
 		axios.get(url + "/settings").then((res) => {
-			const mmdOptions = res.data.mmdOptions
-				? JSON.parse(res.data.mmdOptions)
+			const linktOptions = res.data.linktOptions
+				? JSON.parse(res.data.linktOptions)
 				: console.log("Blockons Options Empty");
 
-<<<<<<< HEAD
 			setBlockonsOptions(linktOptions); // Set settings to defaults if not found
 			// console.log("Options Done");
-=======
-			setBlockonsOptions(mmdOptions); // Set settings to defaults if not found
-			console.log("Options Done");
->>>>>>> 014acdfbeef5dd5d7bc3cd2cdacd60dbb775075c
 		});
 
 		setLoader(false);
@@ -55,42 +39,42 @@ const Settings = () => {
 		e.preventDefault();
 		setLoader(true);
 
-		// console.log(mmdDefaults);
-		// console.log(mmdOptions);
+		// console.log(linktDefaults);
+		// console.log(linktOptions);
 
-		const mergedOptions = { ...mmdDefaults, ...mmdOptions };
+		const mergedOptions = { ...linktDefaults, ...linktOptions };
 
 		await axios
 			.post(
 				url + "/settings",
 				{
-					mmdOptions: JSON.stringify(mergedOptions),
+					linktOptions: JSON.stringify(mergedOptions),
 				},
 				{
 					// Add Nonce to prevent this working elsewhere
 					headers: {
 						"content-type": "application/json",
-						"X-WP-NONCE": mmdObject.nonce,
+						"X-WP-NONCE": linktObject.nonce,
 					},
 				}
 			)
 			.then((res) => {
-				// const mmdOptions = JSON.parse(res.data.mmdOptions);
+				// const linktOptions = JSON.parse(res.data.linktOptions);
 				setLoader(false);
 			});
 	};
 
 	return (
 		<React.Fragment>
-			<div className="mmd-updatenotice">
-				<div className="mmd-updatenotice-txt">
-					{__("Thanks for updating! Please run the updater now", "mmd")}
+			<div className="linkt-updatenotice">
+				<div className="linkt-updatenotice-txt">
+					{__("Thanks for updating! Please run the updater now", "linkt")}
 				</div>
-				<div className="mmd-updatenotice-btn">
+				<div className="linkt-updatenotice-btn">
 					{loader ? (
 						<Loader />
 					) : (
-						<a onClick={(e) => handleUpdate(e)}>{__("Run Update", "mmd")}</a>
+						<a onClick={(e) => handleUpdate(e)}>{__("Run Update", "linkt")}</a>
 					)}
 				</div>
 			</div>

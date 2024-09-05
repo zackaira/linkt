@@ -1,14 +1,10 @@
 import { __ } from "@wordpress/i18n";
-<<<<<<< HEAD
 import "./post-type-list.css";
-=======
-import "./admin-post-type-list.css";
->>>>>>> 014acdfbeef5dd5d7bc3cd2cdacd60dbb775075c
 
 document.addEventListener("DOMContentLoaded", () => {
-	const mmdInputs = document.querySelectorAll(".mmd-input");
+	const linktInputs = document.querySelectorAll(".linkt-input");
 
-	mmdInputs.forEach((input) => {
+	linktInputs.forEach((input) => {
 		input.previousElementSibling.addEventListener("click", () => {
 			const copyValue = input.value;
 			const tooltip = input.nextElementSibling;
@@ -16,10 +12,10 @@ document.addEventListener("DOMContentLoaded", () => {
 			navigator.clipboard
 				.writeText(copyValue)
 				.then(() => {
-					tooltip.innerHTML = __("Copied to Clipboard !", "mmd");
+					tooltip.innerHTML = __("Copied to Clipboard !", "linkt");
 
 					setTimeout(() => {
-						tooltip.innerHTML = __("Copy to Clipboard", "mmd");
+						tooltip.innerHTML = __("Copy to Clipboard", "linkt");
 					}, 2000);
 				})
 				.catch((error) => {

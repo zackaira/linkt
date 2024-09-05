@@ -4,9 +4,9 @@ import MmdMetaBox from "./components/MmdMetaBox";
 import "./admin-post-type.css";
 
 document.addEventListener("DOMContentLoaded", () => {
-	const mmdMetaBox = document.getElementById("mmd-post-metabox");
-	if (mmdMetaBox) {
-		const root = createRoot(mmdMetaBox);
-		root.render(<MmdMetaBox mmdObj={mmdPostObj} />);
+	const linktMetaBox = document.getElementById("linkt-post-metabox");
+	if (linktMetaBox) {
+		const root = createRoot(linktMetaBox);
+		root.render(<MmdMetaBox linktObj={linktPostObj} />);
 	}
 });

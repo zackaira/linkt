@@ -19,7 +19,7 @@ function bundle() {
 			"!.editorconfig",
 			"!.gitignore",
 		])
-		.pipe(zip("mmd.zip"))
+		.pipe(zip("linkt.zip"))
 		.pipe(gulp.dest("bundled"));
 }
 

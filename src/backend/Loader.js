@@ -3,9 +3,9 @@ const Loader = ({ height, width }) => {
 	const setWidth = width ? width : false;
 
 	return (
-		<div className="mmd-loader-wrap">
+		<div className="linkt-loader-wrap">
 			<div
-				className="mmd-loader"
+				className="linkt-loader"
 				{...(setHeight || setWidth
 					? {
 							style: {
@@ -15,10 +15,10 @@ const Loader = ({ height, width }) => {
 					  }
 					: {})}
 			>
-				<div className="mmd-spinner-text"></div>
-				<div className="mmd-loader-sector mmd-loader-sector-blue"></div>
-				<div className="mmd-loader-sector mmd-loader-sector-pink"></div>
-				<div className="mmd-loader-sector mmd-loader-sector-purple"></div>
+				<div className="linkt-spinner-text"></div>
+				<div className="linkt-loader-sector linkt-loader-sector-blue"></div>
+				<div className="linkt-loader-sector linkt-loader-sector-pink"></div>
+				<div className="linkt-loader-sector linkt-loader-sector-purple"></div>
 			</div>
 		</div>
 	);
