@@ -1,0 +1,58 @@
+/**
+ * Note that these styles are loaded *before* editor styles, so that
+ * editor-specific styles using the same selectors will take precedence.
+ */
+.wp-block-linkt-disclosure {
+	display: flex;
+}
+.wp-block-linkt-disclosure.align-left {
+	text-align: left;
+}
+.wp-block-linkt-disclosure.align-center {
+	text-align: center;
+}
+.wp-block-linkt-disclosure.align-right {
+	text-align: right;
+}
+
+.wp-block-linkt-disclosure.leftalign .linkt-disclosure {
+	justify-content: flex-start;
+}
+.wp-block-linkt-disclosure.centeralign .linkt-disclosure {
+	justify-content: center;
+}
+.wp-block-linkt-disclosure.rightalign .linkt-disclosure {
+	justify-content: flex-end;
+}
+
+.linkt-disclosure {
+	display: flex;
+}
+.linkt-disclosure .linkt-disclosure-inner {
+	border: 2px solid #ccc;
+}
+.linkt-disclosure .linkt-disclosure-auth {
+	font-size: 13px;
+}
+.linkt-disclosure .linkt-disc-author {
+	margin: 0;
+	padding: 0;
+}
+.linkt-disclosure .linkt-disc-img img {
+	display: block;
+	margin: 0;
+}
+.linkt-disclosure .linkt-disclosure-disc {
+	margin: 0;
+	padding: 0;
+}
+.linkt-disclosure .linkt-disc-title {
+	font-size: 16px;
+	margin: 0;
+	padding: 0;
+}
+.linkt-disclosure .linkt-disc-copy {
+	font-size: 15px;
+	margin: 0;
+	padding: 0;
+}

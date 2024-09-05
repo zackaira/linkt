@@ -1,0 +1,113 @@
+/**
+ * Note that these styles are loaded *before* editor styles, so that
+ * editor-specific styles using the same selectors will take precedence.
+ */
+.wp-block-linkt-button {
+	display: flex;
+}
+.wp-block-linkt-button.align-left {
+	justify-content: flex-start;
+}
+.wp-block-linkt-button.align-center {
+	justify-content: center;
+}
+.wp-block-linkt-button.align-right {
+	justify-content: flex-end;
+}
+.wp-block-linkt-button .linkt-button {
+	margin: 0;
+	padding: 0;
+	color: #fff;
+	border-radius: 5px;
+	letter-spacing: 0.2px;
+}
+.wp-block-linkt-button .linkt-button__a {
+	display: block;
+	font-size: 15px;
+	color: inherit;
+	text-decoration: none;
+	padding: 12px 28px;
+}
+.wp-block-linkt-button .linkt-button__text {
+	color: inherit;
+}
+
+/* -- One - Custom -- */
+.linkt-button.one .linkt-button__a {
+	border: 1px solid rgb(0 0 0 /35%);
+	box-shadow: 0 1px 2px rgb(0 0 0 /20%);
+	background-color: #6883ec;
+}
+
+/* -- Two - 3D -- */
+.linkt-button.two {
+	background-color: #6883ec;
+	border: none;
+	color: white;
+	text-align: center;
+	display: inline-block;
+	box-shadow: 0px 6px 0px #444, 0px 10px 15px rgba(0, 0, 0, 0.2);
+	transition: transform 0.1s, box-shadow 0.1s;
+	position: relative;
+}
+
+.linkt-button.two:active {
+	box-shadow: 0px 4px 0px #444, 0px 6px 10px rgba(0, 0, 0, 0.2);
+	transform: translateY(2px);
+}
+/* -- Three - Inverted -- */
+.linkt-button.three {
+	background-color: #6883ec;
+	border-style: none;
+	box-shadow: inset 0px -12px 6px rgba(0, 0, 0, 0.25);
+	box-sizing: border-box;
+	display: inline-block;
+	margin: 0;
+	outline: none;
+	transition: all 0.15s;
+}
+.linkt-button.three:hover {
+	box-shadow: inset 0px -6px 8px rgba(0, 0, 0, 0.25);
+	transform: scale(1.04);
+}
+.linkt-button.three:active {
+	transform: scale(1.02);
+}
+/* -- Four - Shine -- */
+.linkt-button.four {
+	background-color: #6883ec;
+	border: none;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	cursor: pointer;
+	position: relative;
+	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2),
+		inset 0px -3px 0px rgba(255, 255, 255, 0.3);
+	transition: background-color 0.3s, box-shadow 0.3s;
+}
+.linkt-button.four::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(
+		to bottom,
+		rgba(255, 255, 255, 0.5),
+		rgba(255, 255, 255, 0) 60%
+	);
+	border-radius: 8px;
+	opacity: 0.7;
+	pointer-events: none;
+	transition: opacity 0.3s;
+}
+.linkt-button.four:hover::before {
+	opacity: 1;
+}
+.linkt-button.four:active {
+	background-color: #45a049;
+	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2),
+		inset 0px -3px 0px rgba(255, 255, 255, 0.1);
+}

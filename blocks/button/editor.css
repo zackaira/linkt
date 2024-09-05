@@ -1,0 +1,21 @@
+/**
+ * Note that these styles are loaded *after* common styles, so that
+ * editor-specific styles using the same selectors will take precedence.
+ */
+.components-dropdown.linkt-colorpicker {
+	width: 100%;
+	margin: 0 0 15px;
+}
+.components-button.linkt-colorpicker-btn {
+	box-shadow: 0 0 0 1px #e0e0e0;
+	padding: 14px 12px;
+	width: 100%;
+	text-decoration: none;
+	color: #545454;
+}
+.components-button.linkt-colorpicker-btn .component-color-indicator {
+	margin: 0 10px 0 0;
+}
+.components-button.linkt-colorpicker-btn:hover {
+	box-shadow: 0 0 0 1px #b9b9b9;
+}

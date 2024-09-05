@@ -1,0 +1,59 @@
+{
+	"$schema": "https://json.schemastore.org/block.json",
+	"apiVersion": 2,
+	"name": "linkt/button",
+	"title": "Linkt Button",
+	"textdomain": "linkt",
+	"icon": "heading",
+	"category": "linkt-category",
+	"keywords": ["button", "link", "linkt"],
+	"attributes": {
+		"alignment": {
+			"type": "string",
+			"default": "left"
+		},
+		"buttonText": {
+			"type": "string",
+			"default": "Visit Linkt"
+		},
+		"buttonUrl": {
+			"type": "string",
+			"default": ""
+		},
+		"buttonTarget": {
+			"type": "string",
+			"default": "_self"
+		},
+		"buttonDesign": {
+			"type": "string",
+			"default": "one"
+		},
+		"buttonVertPad": {
+			"type": "number",
+			"default": 12
+		},
+		"buttonHorizPad": {
+			"type": "number",
+			"default": 28
+		},
+		"buttonBorderRadius": {
+			"type": "number",
+			"default": 5
+		},
+		"buttonFontSize": {
+			"type": "number",
+			"default": 15
+		},
+		"buttonColor": {
+			"type": "string",
+			"default": "#6883ec"
+		},
+		"buttonFontColor": {
+			"type": "string",
+			"default": "#ffffff"
+		}
+	},
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": ["file:./style-index.css", "linkt-fontawesome"]
+}
